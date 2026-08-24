@@ -8,10 +8,14 @@ import PackageDescription
 // DCAdSDK/VENDOR_GUIDE.md for integration instructions and
 // DCAdSDK/Scripts/build-xcframework.sh for how each release is produced.
 //
-// Consumers must also add GoogleMobileAds as a separate package dependency
-// (see VENDOR_GUIDE.md step 1) -- a binaryTarget can't declare
-// `dependencies`, so this can't be pulled in automatically the way a
-// source target could.
+// The binaryTarget's real compiled module is named "DCAdSDKCore" (not
+// "DCAdSDK") specifically so this file's "DCAdSDK" wrapper target can
+// `@_exported import DCAdSDKCore` without colliding with its own module
+// name -- see commit 396be4f for the earlier attempt that failed because
+// both were named "DCAdSDK". The wrapper is an ordinary source target, so
+// unlike a binaryTarget it CAN declare `dependencies`, which is how
+// GoogleMobileAds is pulled in automatically for consumers instead of
+// requiring a second manual package addition.
 
 let package = Package(
     name: "DCAdSDK",
@@ -19,11 +23,21 @@ let package = Package(
     products: [
         .library(name: "DCAdSDK", targets: ["DCAdSDK"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "11.0.0")
+    ],
     targets: [
         .binaryTarget(
+            name: "DCAdSDKCore",
+            url: "https://app.digitalcamp.co.kr/ios/DCAdSDK-1.1.0.xcframework.zip",
+            checksum: "4d372b73758ab88667c1c082bce833f3b6c27d5c57b4e5ec2e41d84bc1e2c959"
+        ),
+        .target(
             name: "DCAdSDK",
-            url: "https://app.digitalcamp.co.kr/ios/DCAdSDK-1.0.0.xcframework.zip",
-            checksum: "1a32818dd546a4eacef7e5982e7c20c9d4cd1487820f42f51c6efe9c96f091be"
+            dependencies: [
+                "DCAdSDKCore",
+                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads")
+            ]
         )
     ]
 )
