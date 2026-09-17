@@ -38,7 +38,7 @@ let package = Package(
         .binaryTarget(
             name: "DCAdSDKCore",
             url: "https://app.digitalcamp.co.kr/ios/DCAdSDK-1.0.3.xcframework.zip",
-            checksum: "506bcb6e8074743e8a74bcc9fa651bbfca3ec1eeabd547fb47c998e4995c1fca"
+            checksum: "967145cc771ae38c3619b52af0ddf11a2cd57837012d00508600402d0cf19a57"
         ),
         .binaryTarget(
             name: "OMSDK_Digitalcamp",
