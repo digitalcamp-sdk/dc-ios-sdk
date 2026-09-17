@@ -16,6 +16,14 @@ import PackageDescription
 // unlike a binaryTarget it CAN declare `dependencies`, which is how
 // GoogleMobileAds is pulled in automatically for consumers instead of
 // requiring a second manual package addition.
+//
+// As of 1.0.3, DCAdSDKCore also dynamically links OMSDK_Digitalcamp (IAB's
+// Open Measurement SDK, self-certified/rebuilt under a "Digitalcamp"
+// namespace -- confirmed via `otool -L` on the compiled binary). Unlike
+// GoogleMobileAds this has no public package source, so it's vendored the
+// same way as DCAdSDKCore itself: hosted as its own xcframework zip and
+// added as a second binaryTarget dependency of the wrapper, so consumers
+// get it linked/embedded transitively without a manual package addition.
 
 let package = Package(
     name: "DCAdSDK",
@@ -29,13 +37,19 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "DCAdSDKCore",
-            url: "https://app.digitalcamp.co.kr/ios/DCAdSDK-1.0.1.xcframework.zip",
-            checksum: "eb59729ae6b0fc456610cb6b66ededbd44e7ab789bde3608f2056428fbadf40a"
+            url: "https://app.digitalcamp.co.kr/ios/DCAdSDK-1.0.3.xcframework.zip",
+            checksum: "506bcb6e8074743e8a74bcc9fa651bbfca3ec1eeabd547fb47c998e4995c1fca"
+        ),
+        .binaryTarget(
+            name: "OMSDK_Digitalcamp",
+            url: "https://app.digitalcamp.co.kr/ios/OMSDK_Digitalcamp-1.6.10.xcframework.zip",
+            checksum: "5707e3a605dc5e9b862eedc5d3dee54ae283b6b8dcbc6d400328b031dea46153"
         ),
         .target(
             name: "DCAdSDK",
             dependencies: [
                 "DCAdSDKCore",
+                "OMSDK_Digitalcamp",
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads")
             ]
         )
